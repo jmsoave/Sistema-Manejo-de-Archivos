@@ -23,7 +23,7 @@ print("\n")
 while exit == 0:
     if directorio != "exit":
         if directorio == "0":
-                directorio = Path("D:\\Usuario\\descargas")
+                directorio = Path.home() / "Downloads"
                 
         if Path(directorio).exists() and Path(directorio).is_dir():
                 directorio = Path(directorio)
@@ -33,7 +33,7 @@ while exit == 0:
         while exit == 0 and directorio != "exit" and not Path(directorio).exists(): #corroboramos la existencia de la ruta
             directorio = input("ingrese otra ruta: ")
             if directorio == "0":
-                directorio = Path("D:\\Usuario\\descargas")
+                directorio = Path.home() / "Downloads"
             elif Path(directorio).exists() and Path(directorio).is_dir():
                 directorio = Path(directorio)
                 print(f"Ruta validada: {directorio}")
