@@ -112,7 +112,7 @@ def Deshacer(directorio):
                     except Exception as e:
                         archivos_error.append(inFile.name)
                         continue
-                try:
+                try: #Verifica que se pueda borrar la carpeta sin que crashee el programa ante un eventual error
                     file.rmdir()
                 except: 
                     for i in range(len(archivos_error)):
