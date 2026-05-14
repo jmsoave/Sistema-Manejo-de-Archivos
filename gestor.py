@@ -50,6 +50,7 @@ def LecturaCarpeta(carpeta): #Captura el peso de la carpeta con la capacidad de 
     
 
 def OrganizacionTotal(directorio): #Funcion Organización de todos los archivos en la carpeta seleccionada, revisando si el archivo tiene un sufijo, es carpeta o no tiene sufijo
+    directorio = Path(directorio)
     contador_Archivos = 0
     acumulador_Archivos = 0
     lista_carpeta = []
@@ -80,7 +81,6 @@ def OrganizacionTotal(directorio): #Funcion Organización de todos los archivos 
             print(f"el archivo {file.name} no se pudo mover")
             continue
         
-        
     cont_carpetas = 0
     ArchivoMax = ArchivoProcesado("ninguno", 0, "ninguno")
     lista_carpeta = []
@@ -92,10 +92,10 @@ def OrganizacionTotal(directorio): #Funcion Organización de todos los archivos 
             CarpetaActual = CarpetaProcesada(file.name, LecturaCarpeta(file), ArchivoMax)
             lista_carpeta.append(CarpetaActual)
         
-        
     return contador_Archivos, acumulador_Archivos, lista_carpeta
 
 def Deshacer(directorio):
+    directorio = Path(directorio)
     lista_carpeta = []
     archivos_error = []
     cont_archivos = 0
@@ -124,17 +124,20 @@ def Deshacer(directorio):
             ArchivoMax = BuscarMax(file)
             CarpetaActual = CarpetaProcesada(file.name, LecturaCarpeta(file), ArchivoMax)
             lista_carpeta.append(CarpetaActual)
-            
-    Reporte(directorio, cont_archivos, acumulador_Archivos, lista_carpeta)
-    archivos_error = []
+
+    archivos_error = []            
+    return cont_archivos, acumulador_Archivos, lista_carpeta
     
 def OrganizacionYReporte(directorio):
-    contador_Archivos, acumulador_Archivos, lista_carpeta= OrganizacionTotal(directorio)
+    contador_Archivos, acumulador_Archivos, lista_carpeta = OrganizacionTotal(directorio)
     Reporte(directorio, contador_Archivos, acumulador_Archivos, lista_carpeta)
     
-    
+def DeshacerYReporte(directorio):
+    contador_Archivos, acumulador_Archivos, lista_carpeta = Deshacer(directorio)
+    Reporte(directorio, contador_Archivos, acumulador_Archivos, lista_carpeta)
     
 def Reporte(directorio, contador_Archivos, acumulador_Archivos, lista_carpeta): #Genera un reporte en formato txt
+    directorio = Path(directorio)
     tamaño_total = LecturaCarpeta(directorio)
     with open(f"{directorio}\\Reporte {date.today()} {datetime.now().strftime('%Hhrs %Mmin')}.txt", 'w', encoding='UTF-8') as reporte:
        reporte.write(f"REPORTE ACTUALIZACION \t {date.today()} \t {datetime.now().strftime("%H:%M:%S")}")
