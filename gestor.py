@@ -54,6 +54,7 @@ def OrganizacionTotal(directorio): #Funcion Organización de todos los archivos 
     contador_Archivos = 0
     acumulador_Archivos = 0
     lista_carpeta = []
+    archivos_error = []
     for file in directorio.iterdir():
         sufijo = file.suffix.lower() #Captura el sufijo del archivo
 
@@ -78,7 +79,7 @@ def OrganizacionTotal(directorio): #Funcion Organización de todos los archivos 
             peso_unitario = 0
             
         except Exception as e:
-            print(f"el archivo {file.name} no se pudo mover")
+            archivos_error.append(f"{file.name} no se pudo mover")
             continue
         
     cont_carpetas = 0
@@ -91,8 +92,8 @@ def OrganizacionTotal(directorio): #Funcion Organización de todos los archivos 
             ArchivoMax = BuscarMax(file)
             CarpetaActual = CarpetaProcesada(file.name, LecturaCarpeta(file), ArchivoMax)
             lista_carpeta.append(CarpetaActual)
-        
-    return contador_Archivos, acumulador_Archivos, lista_carpeta
+  
+    return contador_Archivos, acumulador_Archivos, lista_carpeta, archivos_error
 
 def Deshacer(directorio):
     directorio = Path(directorio)
@@ -110,36 +111,35 @@ def Deshacer(directorio):
                         shutil.move(str(inFile), str(directorio))
 
                     except Exception as e:
-                        archivos_error.append(inFile.name)
+                        archivos_error.append(f"{inFile.name} no se pudo mover")
                         continue
                 try: #Verifica que se pueda borrar la carpeta sin que crashee el programa ante un eventual error
                     file.rmdir()
                 except: 
-                    for i in range(len(archivos_error)):
-                        print(f"el archivo {archivos_error[i]} no se pudo mover")
-                    print(f"No se borrara la carpeta {file.name}")
+                    archivos_error.append(f"{file.name} no se borrara la carpeta")
     
     for file in directorio.iterdir():
         if not file.is_file():
             ArchivoMax = BuscarMax(file)
             CarpetaActual = CarpetaProcesada(file.name, LecturaCarpeta(file), ArchivoMax)
             lista_carpeta.append(CarpetaActual)
-
-    archivos_error = []            
-    return cont_archivos, acumulador_Archivos, lista_carpeta
+           
+    return cont_archivos, acumulador_Archivos, lista_carpeta, archivos_error
     
 def OrganizacionYReporte(directorio):
-    contador_Archivos, acumulador_Archivos, lista_carpeta = OrganizacionTotal(directorio)
+    contador_Archivos, acumulador_Archivos, lista_carpeta, lista_error = OrganizacionTotal(directorio)
     Reporte(directorio, contador_Archivos, acumulador_Archivos, lista_carpeta)
+    return lista_error
     
 def DeshacerYReporte(directorio):
-    contador_Archivos, acumulador_Archivos, lista_carpeta = Deshacer(directorio)
+    contador_Archivos, acumulador_Archivos, lista_carpeta, lista_error = Deshacer(directorio)
     Reporte(directorio, contador_Archivos, acumulador_Archivos, lista_carpeta)
+    return lista_error
     
 def Reporte(directorio, contador_Archivos, acumulador_Archivos, lista_carpeta): #Genera un reporte en formato txt
     directorio = Path(directorio)
     tamaño_total = LecturaCarpeta(directorio)
-    with open(f"{directorio}\\Reporte {date.today()} {datetime.now().strftime('%Hhrs %Mmin')}.txt", 'w', encoding='UTF-8') as reporte:
+    with open(directorio / f"Reporte {date.today()} {datetime.now().strftime('%Hhrs %Mmin')}.txt", 'w', encoding='UTF-8') as reporte:
        reporte.write(f"REPORTE ACTUALIZACION \t {date.today()} \t {datetime.now().strftime("%H:%M:%S")}")
        reporte.write("\n-------------------------------------------------------------------------------------------------\n")
        reporte.write(f"\nTamaño total de la carpeta {directorio.name}: {tamaño_total/((1024)**2):.2f} mb \nTotal de archivos organizados: {contador_Archivos} \nTamaño total organizado: {acumulador_Archivos/((1024)**2):.2f} mb\n")

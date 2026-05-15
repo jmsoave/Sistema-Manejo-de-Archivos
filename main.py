@@ -1,4 +1,5 @@
 #se importa la interfaz grafica del programa
 import interfaz
 
-interfaz.Inicio()
+if __name__ == "__main__":
+    interfaz.Inicio()
