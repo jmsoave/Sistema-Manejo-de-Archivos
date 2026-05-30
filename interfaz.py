@@ -57,7 +57,7 @@ class App(customtkinter.CTk):
   
         if ruta:
            self.etiqueta_ruta.configure(text=ruta, text_color="white")
-        self.directorio = ruta
+           self.directorio = ruta
     
     def FOrganizar(self):
         self.botonOrganizar.configure(state="disabled")
@@ -73,7 +73,7 @@ class App(customtkinter.CTk):
         
     def OrganizarHilo(self):
         lista_error = gestor.OrganizacionYReporte(self.directorio)
-        self.after(0, lambda: self._finalizar(lista_error))
+        self.after(0, lambda err=lista_error: self._finalizar(err))
 
     def FDeshacer(self):
         self.botonOrganizar.configure(state="disabled")
@@ -89,7 +89,7 @@ class App(customtkinter.CTk):
             
     def DeshacerHilo(self):
         lista_error = gestor.DeshacerYReporte(self.directorio)
-        self.after(0, lambda: self._finalizar(lista_error))
+        self.after(0, lambda err=lista_error: self._finalizar(err))
 
     def _finalizar(self, lista_error):
         self.AnadirErrores(lista_error)
